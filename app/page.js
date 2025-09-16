@@ -5,16 +5,29 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [quotes, setQuotes] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchQuotes = async () => {
+  const fetchQuotes = async (append = false) => {
+    setIsLoading(true);
+    try {
       const response = await fetch(
         "http://localhost:3000/quotes/random?limit=10"
       );
       const data = await response.json();
-      setQuotes(data);
-    };
 
+      if (append) {
+        setQuotes((prevQuotes) => [...prevQuotes, ...data]);
+      } else {
+        setQuotes(data);
+      }
+    } catch (error) {
+      console.error("Error fetching quotes:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchQuotes();
   }, []);
 
@@ -35,8 +48,12 @@ export default function Home() {
     }
   };
 
+  const loadMoreQuotes = () => {
+    fetchQuotes(true);
+  };
+
   return (
-    <div className='p-4 bg-slate-400 dark:bg-sky-900'>
+    <div className='min-h-screen p-4 bg-slate-400 dark:bg-sky-900'>
       <button
         onClick={toggleTheme}
         className='fixed top-4 right-4 z-10 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-gray-600'
@@ -95,6 +112,22 @@ export default function Home() {
             </div>
           </div>
         ))}
+      </div>
+      <div className='flex justify-center'>
+        <button
+          onClick={loadMoreQuotes}
+          disabled={isLoading}
+          className='mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+        >
+          {isLoading ? (
+            <div className='flex items-center space-x-2'>
+              <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin'></div>
+              <span>Loading...</span>
+            </div>
+          ) : (
+            "Load More Quotes"
+          )}
+        </button>
       </div>
     </div>
   );
