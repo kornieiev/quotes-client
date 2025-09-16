@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Button from "./components/Button";
 
 export default function Home() {
   const [quotes, setQuotes] = useState([]);
@@ -114,20 +115,9 @@ export default function Home() {
         ))}
       </div>
       <div className='flex justify-center'>
-        <button
-          onClick={loadMoreQuotes}
-          disabled={isLoading}
-          className='mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
-        >
-          {isLoading ? (
-            <div className='flex items-center space-x-2'>
-              <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin'></div>
-              <span>Loading...</span>
-            </div>
-          ) : (
-            "Load More Quotes"
-          )}
-        </button>
+        <Button onClick={loadMoreQuotes} disabled={isLoading}>
+          Load More Quotes
+        </Button>
       </div>
     </div>
   );
