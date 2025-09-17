@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Header from "./Header";
+import Navbar from "./Header";
 
 export default function Layout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -24,7 +24,7 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+      <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
     </>
   );
 }
