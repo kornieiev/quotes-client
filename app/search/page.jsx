@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Button from "../components/Button";
 import Quote from "../components/Quote";
+import { validateField } from "../heplers/searchFormValidation";
 
 export default function Search() {
   const [searchResults, setSearchResults] = useState(null);
@@ -16,26 +17,49 @@ export default function Search() {
   const [isSearchParamsInForm, setSearchParamsInForm] = useState();
   const [validationErrors, setValidationErrors] = useState({});
 
+  // Form validation function
+  const validateForm = () => {
+    const errors = {};
+
+    // Check if at least one search field is filled
+    if (
+      searchForm.author.trim() === "" &&
+      searchForm.text.trim() === "" &&
+      searchForm.category.trim() === ""
+    ) {
+      errors.form = "Please fill at least one search field";
+      errors.author = "Author is empty";
+      errors.text = "Text is empty";
+      errors.category = "Category is empty";
+    }
+
+    // Validate individual fields
+    Object.keys(searchForm).forEach((field) => {
+      const fieldErrors = validateField(field, searchForm[field]);
+      Object.assign(errors, fieldErrors);
+    });
+
+    return errors;
+  };
+
   const searchQuotes = async (e) => {
     e.preventDefault();
 
-    if (
-      searchForm.author === "" &&
-      searchForm.text === "" &&
-      searchForm.category === ""
-    ) {
-      setSearchParamsInForm("Not correct search params");
-      setValidationErrors({
-        author: "Author is empty",
-        text: "Text is empty",
-        category: "Category is empty",
-      });
+    const formErrors = validateForm();
 
+    if (Object.keys(formErrors).length > 0) {
+      setValidationErrors(formErrors);
+      setSearchParamsInForm("Not correct search params");
       return;
     }
 
     setIsLoading(true);
+    setValidationErrors({});
+    setSearchParamsInForm(false);
+
     try {
+      setValidationErrors({});
+
       const queryParams = new URLSearchParams();
 
       if (searchForm.author.trim()) {
@@ -56,7 +80,6 @@ export default function Search() {
       const data = await response.json();
 
       setSearchResults(data);
-      setValidationErrors({});
     } catch (error) {
       console.error("Error searching quotes:", error);
     } finally {
@@ -67,10 +90,38 @@ export default function Search() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Update form state
     setSearchForm((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // Validate field on change
+    const fieldErrors = validateField(name, value);
+
+    setValidationErrors((prev) => {
+      const newErrors = { ...prev };
+
+      // Remove error for this field if validation passes
+      if (Object.keys(fieldErrors).length === 0) {
+        delete newErrors[name];
+        // Also clear form error if any field is valid
+        if (value.trim() !== "") {
+          delete newErrors.form;
+        }
+      } else {
+        // Add new error for this field
+        Object.assign(newErrors, fieldErrors);
+      }
+
+      return newErrors;
+    });
+
+    // Clear search params error if user is typing
+    if (value.trim() !== "") {
+      setSearchParamsInForm(false);
+    }
   };
 
   const clearSearch = () => {
@@ -218,10 +269,10 @@ export default function Search() {
           )}
         </div>
 
-        {isSearchParamsInForm && (
+        {validationErrors.form && (
           <div className='text-center mb-8'>
             <p className='text-red-700 dark:text-gray-400 text-lg'>
-              {isSearchParamsInForm}
+              {validationErrors.form}
             </p>
           </div>
         )}
@@ -247,7 +298,8 @@ export default function Search() {
         {!hasSearchResults && (
           <div className='text-center mt-8'>
             <p className='text-gray-600 dark:text-gray-400 text-lg'>
-              Enter search criteria and click "Search Quotes" to find quotes.
+              Enter search criteria and click &quot;Search Quotes&quot; to find
+              quotes.
             </p>
           </div>
         )}

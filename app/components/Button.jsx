@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function Button({ onClick, disabled, children }) {
-  console.log("children", children);
   return (
     <button
       onClick={onClick}
