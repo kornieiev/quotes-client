@@ -39,9 +39,9 @@ export default function Home() {
 
   return (
     <div>
-      <h1 className='text-center text-5xl mb-6 text-gray-700 dark:text-gray-200'>
-        Quotes frontend app
-      </h1>
+      <h2 className='text-center text-5xl mb-6 text-gray-700 dark:text-gray-200'>
+        Random Quotes:
+      </h2>
 
       {/* Quotes Display */}
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>

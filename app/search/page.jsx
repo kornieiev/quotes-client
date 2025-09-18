@@ -14,7 +14,8 @@ export default function Search() {
     limit: "5",
   });
   const [isSearchParamsInForm, setSearchParamsInForm] = useState();
-  console.log("isSearchParamsInForm", isSearchParamsInForm);
+  const [validationErrors, setValidationErrors] = useState({});
+
   const searchQuotes = async (e) => {
     e.preventDefault();
 
@@ -24,6 +25,11 @@ export default function Search() {
       searchForm.category === ""
     ) {
       setSearchParamsInForm("Not correct search params");
+      setValidationErrors({
+        author: "Author is empty",
+        text: "Text is empty",
+        category: "Category is empty",
+      });
 
       return;
     }
@@ -50,6 +56,7 @@ export default function Search() {
       const data = await response.json();
 
       setSearchResults(data);
+      setValidationErrors({});
     } catch (error) {
       console.error("Error searching quotes:", error);
     } finally {
@@ -107,6 +114,11 @@ export default function Search() {
                   placeholder='Search by author...'
                   className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
                 />
+                {validationErrors.author && (
+                  <span className='text-rose-600 text-xs'>
+                    {validationErrors.author}
+                  </span>
+                )}
               </div>
 
               {/* Text Input */}
@@ -126,6 +138,11 @@ export default function Search() {
                   placeholder='Search in quote text...'
                   className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
                 />
+                {validationErrors.text && (
+                  <span className='text-rose-600 text-xs'>
+                    {validationErrors.author}
+                  </span>
+                )}
               </div>
 
               {/* Category Input */}
@@ -145,6 +162,11 @@ export default function Search() {
                   placeholder='Search by category...'
                   className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
                 />
+                {validationErrors.category && (
+                  <span className='text-rose-600 text-xs'>
+                    {validationErrors.category}
+                  </span>
+                )}
               </div>
 
               {/* Limit Select */}

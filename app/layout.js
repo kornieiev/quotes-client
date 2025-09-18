@@ -22,10 +22,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-400 dark:bg-sky-900`}
       >
         <Layout />
-        <main className='container mx-auto min-h-screen p-8 bg-slate-400 dark:bg-sky-900'>
+        <main className='container mx-auto min-h-screen p-8 bg-slate-400 dark:bg-sky-900 '>
           {children}
         </main>
       </body>
