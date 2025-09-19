@@ -17,12 +17,7 @@ export default function Navbar({ toggleTheme, isDarkMode }) {
       <div className='flex justify-between items-center'>
         {/* Logo/Title */}
         <div className='flex items-center'>
-          <Link
-            // key={navLinks[0].link.href}
-            // href={navLinks[0].link.href}
-            key={"/"}
-            href={"/"}
-          >
+          <Link key={navLinks[0].href} href={navLinks[0].href}>
             <h1 className='text-2xl font-bold text-gray-800 dark:text-gray-200'>
               Quotes App
             </h1>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Button from "../components/Button";
 import Quote from "../components/Quote";
 import { validateField } from "../heplers/searchFormValidation";
@@ -16,6 +17,8 @@ export default function Search() {
   });
   const [isSearchParamsInForm, setSearchParamsInForm] = useState();
   const [validationErrors, setValidationErrors] = useState({});
+
+  const errorToast = (message) => toast.error(message);
 
   // Form validation function
   const validateForm = () => {
@@ -76,12 +79,33 @@ export default function Search() {
 
       const response = await fetch(
         `http://localhost:3000/quotes/?${queryParams.toString()}`
+        // `http://localhost:3000/quotes?limit=500`
+        // `http://localhost:3000/quotes?limit=0&category=-`
       );
+
+      if (response && response.status !== "200") {
+        const data = await response.json();
+
+        console.log("first");
+
+        if (!data && !data.errors) {
+          errorToast("Unknown Response Error !");
+        } else if (data.errors) {
+          data.errors.map((err) => {
+            if (err.type === "field") {
+              errorToast(`Error: ${err.message} ${err.path}`);
+              return;
+            }
+          });
+          return;
+        }
+      }
       const data = await response.json();
 
       setSearchResults(data);
     } catch (error) {
       console.error("Error searching quotes:", error);
+      errorToast(error.message);
     } finally {
       setIsLoading(false);
       setSearchParamsInForm(false);
@@ -304,6 +328,7 @@ export default function Search() {
           </div>
         )}
       </div>
+      <Toaster />
     </div>
   );
 }
